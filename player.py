@@ -6,12 +6,12 @@ import pyganim
 import os
 import blocks
 
-MOVE_SPEED = 3
+MOVE_SPEED = 2
 MOVE_EXTRA_SPEED = 2.5 # ускорение
 WIDTH = 22
 HEIGHT = 32
 COLOR =  "#888888"
-JUMP_POWER = 8
+JUMP_POWER = 7
 JUMP_EXTRA_POWER = 1  # дополнительная сила прыжка
 GRAVITY = 0.35 # Сила, которая будет тянуть нас вниз
 ANIMATION_DELAY = 0.1 # скорость смены кадров
@@ -34,10 +34,14 @@ ANIMATION_JUMP = [('%s/mario/j.png' % ICON_DIR, 0.1)]
 ANIMATION_STAY = [('%s/mario/0.png' % ICON_DIR, 0.1)]
 
 class Player(sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, level_width):
         sprite.Sprite.__init__(self)
         self.experience = 0
+	self.money = 0
+	self.levels = [50, 100, 500, 1000]
+	self.current_level = 0
         self.home = True
+	self.level_width = level_width
         self.xvel = 0   #скорость перемещения. 0 - стоять на месте
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
@@ -134,7 +138,15 @@ class Player(sprite.Sprite):
         self.collide(0, self.yvel, platforms, entities)
 
         self.rect.x += self.xvel # переносим свои положение на xvel
+	if self.rect.left <= 0:
+		self.rect.x = 0
+	if self.rect.right >= self.level_width:
+		self.rect.x = self.level_width - WIDTH
         self.collide(self.xvel, 0, platforms, entities)
+
+	for i, l in enumerate(self.levels):
+		if self.experience > l:
+			self.current_level = i + 1
    
     def collide(self, xvel, yvel, platforms, entities):
         for p in platforms:
@@ -147,6 +159,23 @@ class Player(sprite.Sprite):
                     entities.remove(p)
                     platforms.remove(p)
                     self.experience += 10
+                elif isinstance(p, blocks.Conference):
+                    entities.remove(p)
+                    platforms.remove(p)
+                    self.experience += 30
+                elif isinstance(p, blocks.Computer):
+                    entities.remove(p)
+                    platforms.remove(p)
+                    self.experience += 50
+                    self.money += 1000
+                elif isinstance(p, blocks.Briefcase):
+                    entities.remove(p)
+                    platforms.remove(p)
+                    self.experience += 500
+                elif isinstance(p, blocks.Money):
+                    entities.remove(p)
+                    platforms.remove(p)
+                    self.money += 100
                 else:
                     if xvel > 0:                      # если движется вправо
                         self.rect.right = p.rect.left # то не движется вправо

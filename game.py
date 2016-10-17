@@ -44,7 +44,8 @@ def camera_configure(camera, target_rect):
 def loadLevel():
     global playerX, playerY # объявляем глобальные переменные, это координаты героя
 
-    level='----B--T--C-------------------------------'
+    level='--W-B-----C---W------------B------------W-----M--------------WM----------C----------------------B'\
+          '-B---------------B----------B-----------C--B----------B-------T----M--C----------W---B---B-----F-'
     playerX= 0
     playerY = 0
     x = 0 # координаты
@@ -57,6 +58,22 @@ def loadLevel():
         platforms.append(pf)
         if col == "B":
             bd = Book(x,y - PLATFORM_HEIGHT)
+            entities.add(bd)
+            platforms.append(bd)
+        if col == "M":
+            bd = Money(x,y - PLATFORM_HEIGHT)
+            entities.add(bd)
+            platforms.append(bd)
+        if col == "C":
+            bd = Conference(x,y - PLATFORM_HEIGHT)
+            entities.add(bd)
+            platforms.append(bd)
+        if col == "W":
+            bd = Computer(x,y - PLATFORM_HEIGHT)
+            entities.add(bd)
+            platforms.append(bd)
+        if col == "F":
+            bd = Briefcase(x,y - PLATFORM_HEIGHT)
             entities.add(bd)
             platforms.append(bd)
         if col == "T":
@@ -84,7 +101,7 @@ def main():
     up = False
     running = False
      
-    hero = Player(playerX,playerY) # создаем героя по (x,y) координатам
+    hero = Player(playerX,playerY, total_level_width) # создаем героя по (x,y) координатам
     entities.add(hero)
            
     timer = pygame.time.Clock()
@@ -119,9 +136,10 @@ def main():
             screen.blit(bg1, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
         else:
             screen.blit(bg2, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
-        text = "Exp:{}".format(hero.experience)
-        label = myfont.render(text, 1, (255,255,0))
-        screen.blit(label, (0, 0))
+        exp_label = myfont.render("Exp:{}".format(hero.experience), 1, (255,255,0))
+        screen.blit(exp_label, (0, 0))
+        level_label = myfont.render("level:{}".format(hero.current_level), 1, (255,255,0))
+        screen.blit(level_label, (0, 20))
 
         animatedEntities.update() # показываеaм анимацию 
         camera.update(hero) # центризируем камеру относительно персонажа
