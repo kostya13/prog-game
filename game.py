@@ -11,9 +11,11 @@ from blocks import *
 WIN_WIDTH = 800 #Ширина создаваемого окна
 WIN_HEIGHT = 640 # Высота
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT) # Группируем ширину и высоту в одну переменную
-BACKGROUND_COLOR = "#000000"
+BACKGROUND_COLOR1 = "#000000"
+BACKGROUND_COLOR2 = "#003F00"
 
 FILE_DIR = os.path.dirname(__file__)
+
 
 class Camera(object):
     def __init__(self, camera_func, width, height):
@@ -70,9 +72,13 @@ def main():
     pygame.init() # Инициация PyGame, обязательная строчка 
     screen = pygame.display.set_mode(DISPLAY) # Создаем окошко
     pygame.display.set_caption("Super Mario Boy") # Пишем в шапку
-    bg = Surface((WIN_WIDTH,WIN_HEIGHT)) # Создание видимой поверхности
+    bg1 = Surface((WIN_WIDTH,WIN_HEIGHT)) # Создание видимой поверхности
                                          # будем использовать как фон
-    bg.fill(Color(BACKGROUND_COLOR))     # Заливаем поверхность сплошным цветом
+    bg1.fill(Color(BACKGROUND_COLOR1))     # Заливаем поверхность сплошным цветом
+        
+    bg2 = Surface((WIN_WIDTH,WIN_HEIGHT)) # Создание видимой поверхности
+                                         # будем использовать как фон
+    bg2.fill(Color(BACKGROUND_COLOR2))     # Заливаем поверхность сплошным цветом
         
     left = right = False # по умолчанию - стоим
     up = False
@@ -85,7 +91,7 @@ def main():
     
     
     camera = Camera(camera_configure, total_level_width, total_level_height) 
-    
+    myfont = pygame.font.SysFont("monospace", 15)
     while not hero.winner: # Основной цикл программы
         timer.tick(60)
         for e in pygame.event.get(): # Обрабатываем события
@@ -109,7 +115,13 @@ def main():
             if e.type == KEYUP and e.key == K_LSHIFT:
                 running = False
 
-        screen.blit(bg, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
+        if hero.home:
+            screen.blit(bg1, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
+        else:
+            screen.blit(bg2, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
+        text = "Exp:{}".format(hero.experience)
+        label = myfont.render(text, 1, (255,255,0))
+        screen.blit(label, (0, 0))
 
         animatedEntities.update() # показываеaм анимацию 
         camera.update(hero) # центризируем камеру относительно персонажа

@@ -36,6 +36,8 @@ ANIMATION_STAY = [('%s/mario/0.png' % ICON_DIR, 0.1)]
 class Player(sprite.Sprite):
     def __init__(self, x, y):
         sprite.Sprite.__init__(self)
+        self.experience = 0
+        self.home = True
         self.xvel = 0   #скорость перемещения. 0 - стоять на месте
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
@@ -138,11 +140,13 @@ class Player(sprite.Sprite):
         for p in platforms:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
                 if isinstance(p, blocks.BlockTeleport):
-                    pass
+                    entities.remove(p)
+                    platforms.remove(p)
+                    self.home = False
                 elif isinstance(p, blocks.Book):
                     entities.remove(p)
                     platforms.remove(p)
-                    pass
+                    self.experience += 10
                 else:
                     if xvel > 0:                      # если движется вправо
                         self.rect.right = p.rect.left # то не движется вправо
@@ -159,10 +163,3 @@ class Player(sprite.Sprite):
                         self.rect.top = p.rect.bottom # то не движется вверх
                         self.yvel = 0                 # и энергия прыжка пропадает
 
-    def teleporting(self, goX, goY):
-        self.rect.x = goX
-        self.rect.y = goY
-        
-    def die(self):
-        time.wait(500)
-        self.teleporting(self.startX, self.startY) # перемещаемся в начальные координаты
