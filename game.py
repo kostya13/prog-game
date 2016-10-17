@@ -6,7 +6,6 @@ import pygame
 from pygame import *
 from player import *
 from blocks import *
-from monsters import *
 
 #Объявляем переменные
 WIN_WIDTH = 800 #Ширина создаваемого окна
@@ -43,37 +42,31 @@ def camera_configure(camera, target_rect):
 def loadLevel():
     global playerX, playerY # объявляем глобальные переменные, это координаты героя
 
-            playerX= 0
-            playerY = 0
-                tp = BlockTeleport(int(commands[1]),int(commands[2]),int(commands[3]),int(commands[4]))
-                entities.add(tp)
-                platforms.append(tp)
-                animatedEntities.add(tp)
-    x=y=0 # координаты
-    total_level_width  = len(level[0])*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
-    total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
-    for row in level: # вся строка
-        for col in row: # каждый символ
-            if col == "-":
-                pf = Platform(x,y)
-                entities.add(pf)
-                platforms.append(pf)
-            if col == "*":
-                bd = Platform(x,y)
-                entities.add(bd)
-                platforms.append(bd)
-            if col == "P":
-                pr = Princess(x,y)
-                entities.add(pr)
-                platforms.append(pr)
-                animatedEntities.add(pr)
-   
-            x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
-        y += PLATFORM_HEIGHT    #то же самое и с высотой
-        x = 0                   #на каждой новой строчке начинаем с нуля
+    level='----B--T--C-------------------------------'
+    playerX= 0
+    playerY = 0
+    x = 0 # координаты
+    y = 10 * PLATFORM_HEIGHT
+    total_level_width  = len(level)*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
+    total_level_height = 10*PLATFORM_HEIGHT   # высоту
+    for col in level: # каждый символ
+        pf = Platform(x,y)
+        entities.add(pf)
+        platforms.append(pf)
+        if col == "B":
+            bd = Book(x,y - PLATFORM_HEIGHT)
+            entities.add(bd)
+            platforms.append(bd)
+        if col == "T":
+            tp = BlockTeleport(x, y - PLATFORM_HEIGHT)
+            entities.add(tp)
+            platforms.append(tp)
+            animatedEntities.add(tp)
+        x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
+    return total_level_width, total_level_height
 
 def main():
-    loadLevel()
+    total_level_width, total_level_height = loadLevel()
     pygame.init() # Инициация PyGame, обязательная строчка 
     screen = pygame.display.set_mode(DISPLAY) # Создаем окошко
     pygame.display.set_caption("Super Mario Boy") # Пишем в шапку
@@ -119,14 +112,12 @@ def main():
         screen.blit(bg, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
 
         animatedEntities.update() # показываеaм анимацию 
-        monsters.update(platforms) # передвигаем всех монстров
         camera.update(hero) # центризируем камеру относительно персонажа
-        hero.update(left, right, up, running, platforms) # передвижение
+        hero.update(left, right, up, running, platforms, entities) # передвижение
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         pygame.display.update()     # обновление и вывод всех изменений на экран
         
-level = []
 entities = pygame.sprite.Group() # Все объекты
 animatedEntities = pygame.sprite.Group() # все анимированные объекты, за исключением героя
 platforms = [] # то, во что мы будем врезаться или опираться

@@ -5,14 +5,13 @@ from pygame import *
 import pyganim
 import os
 import blocks
-import monsters
 
-MOVE_SPEED = 7
+MOVE_SPEED = 3
 MOVE_EXTRA_SPEED = 2.5 # ускорение
 WIDTH = 22
 HEIGHT = 32
 COLOR =  "#888888"
-JUMP_POWER = 10
+JUMP_POWER = 8
 JUMP_EXTRA_POWER = 1  # дополнительная сила прыжка
 GRAVITY = 0.35 # Сила, которая будет тянуть нас вниз
 ANIMATION_DELAY = 0.1 # скорость смены кадров
@@ -82,7 +81,7 @@ class Player(sprite.Sprite):
         self.winner = False
         
 
-    def update(self, left, right, up, running, platforms):
+    def update(self, left, right, up, running, platforms, entities):
         
         if up:
             if self.onGround: # прыгаем, только когда можем оттолкнуться от земли
@@ -130,20 +129,20 @@ class Player(sprite.Sprite):
             
         self.onGround = False; # Мы не знаем, когда мы на земле((   
         self.rect.y += self.yvel
-        self.collide(0, self.yvel, platforms)
+        self.collide(0, self.yvel, platforms, entities)
 
         self.rect.x += self.xvel # переносим свои положение на xvel
-        self.collide(self.xvel, 0, platforms)
+        self.collide(self.xvel, 0, platforms, entities)
    
-    def collide(self, xvel, yvel, platforms):
+    def collide(self, xvel, yvel, platforms, entities):
         for p in platforms:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
-                if isinstance(p, blocks.BlockDie) or isinstance(p, monsters.Monster): # если пересакаемый блок - blocks.BlockDie или Monster
-                       self.die()# умираем
-                elif isinstance(p, blocks.BlockTeleport):
-                       self.teleporting(p.goX, p.goY)
-                elif isinstance(p, blocks.Princess): # если коснулись принцессы
-                       self.winner = True # победили!!!
+                if isinstance(p, blocks.BlockTeleport):
+                    pass
+                elif isinstance(p, blocks.Book):
+                    entities.remove(p)
+                    platforms.remove(p)
+                    pass
                 else:
                     if xvel > 0:                      # если движется вправо
                         self.rect.right = p.rect.left # то не движется вправо
