@@ -11,7 +11,7 @@ MOVE_EXTRA_SPEED = 2.5 # ускорение
 WIDTH = 22
 HEIGHT = 32
 COLOR =  "#888888"
-JUMP_POWER = 7
+JUMP_POWER = 2
 JUMP_EXTRA_POWER = 1  # дополнительная сила прыжка
 GRAVITY = 0.35 # Сила, которая будет тянуть нас вниз
 ANIMATION_DELAY = 0.1 # скорость смены кадров
@@ -93,9 +93,7 @@ class Player(sprite.Sprite):
         
         if up:
             if self.onGround: # прыгаем, только когда можем оттолкнуться от земли
-                self.yvel = -JUMP_POWER
-                if running and (left or right): # если есть ускорение и мы движемся
-                       self.yvel -= JUMP_EXTRA_POWER # то прыгаем выше
+                self.yvel = -JUMP_POWER * (self.current_level + 1)
                 self.image.fill(Color(COLOR))
                 self.boltAnimJump.blit(self.image, (0, 0))
                        

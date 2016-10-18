@@ -60,12 +60,11 @@ def loadLevel():
         pf = Platform(col * PLATFORM_WIDTH, y)
         entities.add(pf)
         platforms.append(pf)
-    for col in range(2, level, 2): 
-        if randint(0,1):
-            bd = Skill(col * PLATFORM_WIDTH, y - 2 * PLATFORM_HEIGHT, "skills/{}".format(skills[randint(0, len(skills)-1)]))
-            entities.add(bd)
-            platforms.append(bd)
-    tp = BlockTeleport(10 * PLATFORM_WIDTH, y - 2 * PLATFORM_HEIGHT)
+    for i, img in enumerate(skills):
+        bd = Skill((i + 4) * PLATFORM_WIDTH, y - 2 * PLATFORM_HEIGHT, "skills/{}".format(img))
+        entities.add(bd)
+        platforms.append(bd)
+    tp = BlockTeleport(30 * PLATFORM_WIDTH, y - 4 * PLATFORM_HEIGHT)
     entities.add(tp)
     platforms.append(tp)
     animatedEntities.add(tp)
@@ -97,7 +96,7 @@ def main():
     camera = Camera(camera_configure, total_level_width, total_level_height) 
     myfont = pygame.font.SysFont("arial.ttf", 35)
     winfont = pygame.font.SysFont("arial.ttf", 55)
-    while not hero.winner: # Основной цикл программы
+    while True: # Основной цикл программы
         timer.tick(60)
         for e in pygame.event.get(): # Обрабатываем события
             if e.type == QUIT:
@@ -108,8 +107,6 @@ def main():
                 left = True
             if e.type == KEYDOWN and e.key == K_RIGHT:
                 right = True
-            if e.type == KEYDOWN and e.key == K_LSHIFT:
-                running = True
 
             if e.type == KEYUP and e.key == K_UP:
                 up = False
@@ -117,8 +114,6 @@ def main():
                 right = False
             if e.type == KEYUP and e.key == K_LEFT:
                 left = False
-            if e.type == KEYUP and e.key == K_LSHIFT:
-                running = False
 
         if hero.home:
             screen.blit(bg1, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
@@ -127,7 +122,8 @@ def main():
         exp_label = myfont.render("Навыки: ".decode('utf8'), 1, (255,255,0))
         level_label = myfont.render("Уровень: {}".format(hero.current_level).decode('utf8'), 1, (255,255,0))
         city_label = myfont.render("Город: {}".format(hero.city()).decode('utf8'), 1, (255,255,0))
-        if hero.current_level > 1:
+        if hero.current_level == 4:
+            hero.winner = True
             win_label = winfont.render("Вы достигли уровня 4!".decode('utf8'), 1, (255,255,255))
             screen.blit(win_label, (150, 150))
         screen.blit(exp_label, (0, 5))
