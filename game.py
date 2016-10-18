@@ -9,7 +9,7 @@ from blocks import *
 
 #Объявляем переменные
 WIN_WIDTH = 800 #Ширина создаваемого окна
-WIN_HEIGHT = 640 # Высота
+WIN_HEIGHT = 350 # Высота
 DISPLAY = (WIN_WIDTH, WIN_HEIGHT) # Группируем ширину и высоту в одну переменную
 BACKGROUND_COLOR1 = "#000000"
 BACKGROUND_COLOR2 = "#003F00"
@@ -44,8 +44,7 @@ def camera_configure(camera, target_rect):
 def loadLevel():
     global playerX, playerY # объявляем глобальные переменные, это координаты героя
 
-    level='--W-B-----C---W------------B------------W-----M--------------WM----------C----------------------B'\
-          '-B---------------B----------B-----------C--B----------B-------T----M--C----------W---B---B-----F-'
+    level='--W-B--T--C---W------------B------------W-----M--------------WM----------C----------------------F'
     playerX= 0
     playerY = 0
     x = 0 # координаты
@@ -88,7 +87,7 @@ def main():
     total_level_width, total_level_height = loadLevel()
     pygame.init() # Инициация PyGame, обязательная строчка 
     screen = pygame.display.set_mode(DISPLAY) # Создаем окошко
-    pygame.display.set_caption("Super Mario Boy") # Пишем в шапку
+    pygame.display.set_caption("Programmers emulator") # Пишем в шапку
     bg1 = Surface((WIN_WIDTH,WIN_HEIGHT)) # Создание видимой поверхности
                                          # будем использовать как фон
     bg1.fill(Color(BACKGROUND_COLOR1))     # Заливаем поверхность сплошным цветом
@@ -108,7 +107,8 @@ def main():
     
     
     camera = Camera(camera_configure, total_level_width, total_level_height) 
-    myfont = pygame.font.SysFont("monospace", 15)
+    myfont = pygame.font.SysFont("arial.ttf", 35)
+    winfont = pygame.font.SysFont("arial.ttf", 55)
     while not hero.winner: # Основной цикл программы
         timer.tick(60)
         for e in pygame.event.get(): # Обрабатываем события
@@ -136,10 +136,17 @@ def main():
             screen.blit(bg1, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
         else:
             screen.blit(bg2, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
-        exp_label = myfont.render("Exp:{}".format(hero.experience), 1, (255,255,0))
+        exp_label = myfont.render("Опыт: {}".format(hero.experience).decode('utf8'), 1, (255,255,0))
+        level_label = myfont.render("Уровень: {}".format(hero.current_level).decode('utf8'), 1, (255,255,0))
+        money_label = myfont.render("Деньги: {}".format(hero.money).decode('utf8'), 1, (255,255,0))
+        city_label = myfont.render("Город: {}".format(hero.city()).decode('utf8'), 1, (255,255,0))
+        if hero.current_level > 1:
+            win_label = winfont.render("Вы достигли уровня 4!".decode('utf8'), 1, (255,255,255))
+            screen.blit(win_label, (150, 150))
         screen.blit(exp_label, (0, 0))
-        level_label = myfont.render("level:{}".format(hero.current_level), 1, (255,255,0))
-        screen.blit(level_label, (0, 20))
+        screen.blit(level_label, (0, 30))
+        screen.blit(money_label, (0, 60))
+        screen.blit(city_label, (0, 90))
 
         animatedEntities.update() # показываеaм анимацию 
         camera.update(hero) # центризируем камеру относительно персонажа
@@ -152,4 +159,5 @@ entities = pygame.sprite.Group() # Все объекты
 animatedEntities = pygame.sprite.Group() # все анимированные объекты, за исключением героя
 platforms = [] # то, во что мы будем врезаться или опираться
 if __name__ == "__main__":
+        
     main()

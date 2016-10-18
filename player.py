@@ -37,11 +37,11 @@ class Player(sprite.Sprite):
     def __init__(self, x, y, level_width):
         sprite.Sprite.__init__(self)
         self.experience = 0
-	self.money = 0
-	self.levels = [50, 100, 500, 1000]
-	self.current_level = 0
+        self.money = 0
+        self.levels = [50, 100, 500, 1000]
+        self.current_level = 0
         self.home = True
-	self.level_width = level_width
+        self.level_width = level_width
         self.xvel = 0   #скорость перемещения. 0 - стоять на месте
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
@@ -86,7 +86,10 @@ class Player(sprite.Sprite):
         self.boltAnimJump.play()
         self.winner = False
         
+    def city(self):
+        return "Ижевск" if self.home else "Рязань"
 
+        
     def update(self, left, right, up, running, platforms, entities):
         
         if up:
@@ -138,15 +141,15 @@ class Player(sprite.Sprite):
         self.collide(0, self.yvel, platforms, entities)
 
         self.rect.x += self.xvel # переносим свои положение на xvel
-	if self.rect.left <= 0:
-		self.rect.x = 0
-	if self.rect.right >= self.level_width:
-		self.rect.x = self.level_width - WIDTH
-        self.collide(self.xvel, 0, platforms, entities)
+        if self.rect.left <= 0:
+            self.rect.x = 0
+        if self.rect.right >= self.level_width:
+            self.rect.x = self.level_width - WIDTH
+            self.collide(self.xvel, 0, platforms, entities)
 
-	for i, l in enumerate(self.levels):
-		if self.experience > l:
-			self.current_level = i + 1
+        for i, l in enumerate(self.levels):
+           if self.experience > l:
+               self.current_level = i + 1
    
     def collide(self, xvel, yvel, platforms, entities):
         for p in platforms:
