@@ -14,10 +14,6 @@ ANIMATION_BLOCKTELEPORT = [
             ('%s/blocks/portal2.png' % ICON_DIR),
             ('%s/blocks/portal1.png' % ICON_DIR)]
             
-ANIMATION_PRINCESS = [
-            ('%s/blocks/princess_l.png' % ICON_DIR),
-            ('%s/blocks/princess_r.png' % ICON_DIR)]
-            
  
 class Platform(sprite.Sprite):
     def __init__(self, x, y):
@@ -42,47 +38,13 @@ class BlockTeleport(Platform):
         self.boltAnim.blit(self.image, (0, 0))
 
         
-class Book(Platform):
-    def __init__(self, x, y):
+class Skill(Platform):
+    def __init__(self, x, y, image_path):
         sprite.Sprite.__init__(self)
         self.image = Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
         self.image.fill(Color(PLATFORM_COLOR))
-        self.image = image.load("blocks/book.png")
+        self.image = image.load(image_path)
         self.image.set_colorkey(Color(PLATFORM_COLOR))
         self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
 
-class Computer(Platform):
-    def __init__(self, x, y):
-        sprite.Sprite.__init__(self)
-        self.image = Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
-        self.image.fill(Color(PLATFORM_COLOR))
-        self.image = image.load("blocks/computer.png")
-        self.image.set_colorkey(Color(PLATFORM_COLOR))
-        self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
-
-class Conference(Platform):
-    def __init__(self, x, y):
-        sprite.Sprite.__init__(self)
-        self.image = Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
-        self.image.fill(Color(PLATFORM_COLOR))
-        self.image = image.load("blocks/conference.png")
-        self.image.set_colorkey(Color(PLATFORM_COLOR))
-        self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
-
-class Briefcase(Platform):
-    def __init__(self, x, y):
-        sprite.Sprite.__init__(self)
-        self.image = Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
-        self.image.fill(Color(PLATFORM_COLOR))
-        self.image = image.load("blocks/briefcase.png")
-        self.image.set_colorkey(Color(PLATFORM_COLOR))
-        self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
-
-class Money(Platform):
-    def __init__(self, x, y):
-        sprite.Sprite.__init__(self)
-        self.image = Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
-        self.image.fill(Color(PLATFORM_COLOR))
-        self.image = image.load("blocks/money.png")
-        self.image.set_colorkey(Color(PLATFORM_COLOR))
-        self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
+       

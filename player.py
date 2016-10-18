@@ -36,12 +36,11 @@ ANIMATION_STAY = [('%s/mario/0.png' % ICON_DIR, 0.1)]
 class Player(sprite.Sprite):
     def __init__(self, x, y, level_width):
         sprite.Sprite.__init__(self)
-        self.experience = 0
-        self.money = 0
-        self.levels = [50, 100, 500, 1000]
+        self.levels = [5, 10, 15, 20]
         self.current_level = 0
         self.home = True
         self.level_width = level_width
+	self.skills = []
         self.xvel = 0   #скорость перемещения. 0 - стоять на месте
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
@@ -145,40 +144,23 @@ class Player(sprite.Sprite):
             self.rect.x = 0
         if self.rect.right >= self.level_width:
             self.rect.x = self.level_width - WIDTH
-            self.collide(self.xvel, 0, platforms, entities)
+        self.collide(self.xvel, 0, platforms, entities)
 
         for i, l in enumerate(self.levels):
-           if self.experience > l:
+           if len(self.skills) > l:
                self.current_level = i + 1
    
     def collide(self, xvel, yvel, platforms, entities):
         for p in platforms:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
+                if isinstance(p, blocks.Skill):
+                    self.skills.append(p)
+                    platforms.remove(p)
+                    entities.remove(p)
                 if isinstance(p, blocks.BlockTeleport):
                     entities.remove(p)
                     platforms.remove(p)
                     self.home = False
-                elif isinstance(p, blocks.Book):
-                    entities.remove(p)
-                    platforms.remove(p)
-                    self.experience += 10
-                elif isinstance(p, blocks.Conference):
-                    entities.remove(p)
-                    platforms.remove(p)
-                    self.experience += 30
-                elif isinstance(p, blocks.Computer):
-                    entities.remove(p)
-                    platforms.remove(p)
-                    self.experience += 50
-                    self.money += 1000
-                elif isinstance(p, blocks.Briefcase):
-                    entities.remove(p)
-                    platforms.remove(p)
-                    self.experience += 500
-                elif isinstance(p, blocks.Money):
-                    entities.remove(p)
-                    platforms.remove(p)
-                    self.money += 100
                 else:
                     if xvel > 0:                      # если движется вправо
                         self.rect.right = p.rect.left # то не движется вправо

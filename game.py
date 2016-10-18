@@ -3,6 +3,8 @@
 
 # Импортируем библиотеку pygame
 import pygame
+import os
+from random import randint
 from pygame import *
 from player import *
 from blocks import *
@@ -44,43 +46,29 @@ def camera_configure(camera, target_rect):
 def loadLevel():
     global playerX, playerY # объявляем глобальные переменные, это координаты героя
 
-    level='--W-B--T--C---W------------B------------W-----M--------------WM----------C----------------------F'
+    level= 100
     playerX= 0
     playerY = 0
+
     x = 0 # координаты
     y = 10 * PLATFORM_HEIGHT
-    total_level_width  = len(level)*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
+    total_level_width  = level * PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
     total_level_height = 10*PLATFORM_HEIGHT   # высоту
-    for col in level: # каждый символ
-        pf = Platform(x,y)
+    skills = [f for f in os.listdir('skills') if f.endswith('png')]
+    print skills
+    for col in range(level): 
+        pf = Platform(col * PLATFORM_WIDTH, y)
         entities.add(pf)
         platforms.append(pf)
-        if col == "B":
-            bd = Book(x,y - PLATFORM_HEIGHT)
+    for col in range(2, level, 2): 
+        if randint(0,1):
+            bd = Skill(col * PLATFORM_WIDTH, y - 2 * PLATFORM_HEIGHT, "skills/{}".format(skills[randint(0, len(skills)-1)]))
             entities.add(bd)
             platforms.append(bd)
-        if col == "M":
-            bd = Money(x,y - PLATFORM_HEIGHT)
-            entities.add(bd)
-            platforms.append(bd)
-        if col == "C":
-            bd = Conference(x,y - PLATFORM_HEIGHT)
-            entities.add(bd)
-            platforms.append(bd)
-        if col == "W":
-            bd = Computer(x,y - PLATFORM_HEIGHT)
-            entities.add(bd)
-            platforms.append(bd)
-        if col == "F":
-            bd = Briefcase(x,y - PLATFORM_HEIGHT)
-            entities.add(bd)
-            platforms.append(bd)
-        if col == "T":
-            tp = BlockTeleport(x, y - PLATFORM_HEIGHT)
-            entities.add(tp)
-            platforms.append(tp)
-            animatedEntities.add(tp)
-        x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
+    tp = BlockTeleport(10 * PLATFORM_WIDTH, y - 2 * PLATFORM_HEIGHT)
+    entities.add(tp)
+    platforms.append(tp)
+    animatedEntities.add(tp)
     return total_level_width, total_level_height
 
 def main():
@@ -136,21 +124,21 @@ def main():
             screen.blit(bg1, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
         else:
             screen.blit(bg2, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
-        exp_label = myfont.render("Опыт: {}".format(hero.experience).decode('utf8'), 1, (255,255,0))
+        exp_label = myfont.render("Навыки: ".decode('utf8'), 1, (255,255,0))
         level_label = myfont.render("Уровень: {}".format(hero.current_level).decode('utf8'), 1, (255,255,0))
-        money_label = myfont.render("Деньги: {}".format(hero.money).decode('utf8'), 1, (255,255,0))
         city_label = myfont.render("Город: {}".format(hero.city()).decode('utf8'), 1, (255,255,0))
         if hero.current_level > 1:
             win_label = winfont.render("Вы достигли уровня 4!".decode('utf8'), 1, (255,255,255))
             screen.blit(win_label, (150, 150))
-        screen.blit(exp_label, (0, 0))
+        screen.blit(exp_label, (0, 5))
         screen.blit(level_label, (0, 30))
-        screen.blit(money_label, (0, 60))
-        screen.blit(city_label, (0, 90))
-
+        screen.blit(city_label, (0, 60))
+	
         animatedEntities.update() # показываеaм анимацию 
         camera.update(hero) # центризируем камеру относительно персонажа
         hero.update(left, right, up, running, platforms, entities) # передвижение
+	for i, s in enumerate(hero.skills):
+            screen.blit(s.image, (110 + i * (PLATFORM_WIDTH + 2), 0))
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         pygame.display.update()     # обновление и вывод всех изменений на экран
