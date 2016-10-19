@@ -55,16 +55,23 @@ def loadLevel():
     total_level_width  = level * PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
     total_level_height = 10*PLATFORM_HEIGHT   # высоту
     skills = [f for f in os.listdir('skills') if f.endswith('png')]
-    print skills
     for col in range(level): 
         pf = Platform(col * PLATFORM_WIDTH, y)
         entities.add(pf)
         platforms.append(pf)
+    for col in range(1, 6): 
+        stopx = col * PLATFORM_WIDTH * 8
+        for i in range(1, col):
+            pf = Stop(stopx, y - PLATFORM_HEIGHT * i)
+            entities.add(pf)
+            platforms.append(pf)
+    skillx = PLATFORM_WIDTH * 4
     for i, img in enumerate(skills):
         bd = Skill((i + 4) * PLATFORM_WIDTH, y - 2 * PLATFORM_HEIGHT, "skills/{}".format(img))
         entities.add(bd)
         platforms.append(bd)
-    tp = BlockTeleport(30 * PLATFORM_WIDTH, y - 4 * PLATFORM_HEIGHT)
+        skillx += PLATFORM_WIDTH * 2
+    tp = BlockTeleport(35 * PLATFORM_WIDTH, y - 5 * PLATFORM_HEIGHT)
     entities.add(tp)
     platforms.append(tp)
     animatedEntities.add(tp)
@@ -82,11 +89,14 @@ def main():
     bg2 = Surface((WIN_WIDTH,WIN_HEIGHT)) # Создание видимой поверхности
                                          # будем использовать как фон
     bg2.fill(Color(BACKGROUND_COLOR2))     # Заливаем поверхность сплошным цветом
-        
+     
+    winner = Surface((256, 256))
+    winner = image.load("mario/bigmario.png")
     left = right = False # по умолчанию - стоим
     up = False
     running = False
      
+
     hero = Player(playerX,playerY, total_level_width) # создаем героя по (x,y) координатам
     entities.add(hero)
            
@@ -119,13 +129,17 @@ def main():
             screen.blit(bg1, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
         else:
             screen.blit(bg2, (0,0))      # Каждую итерацию необходимо всё перерисовывать 
-        exp_label = myfont.render("Навыки: ".decode('utf8'), 1, (255,255,0))
-        level_label = myfont.render("Уровень: {}".format(hero.current_level).decode('utf8'), 1, (255,255,0))
-        city_label = myfont.render("Город: {}".format(hero.city()).decode('utf8'), 1, (255,255,0))
+
         if hero.current_level == 4:
             hero.winner = True
             win_label = winfont.render("Вы достигли уровня 4!".decode('utf8'), 1, (255,255,255))
-            screen.blit(win_label, (150, 150))
+            screen.blit(winner, (120, 40))
+            screen.blit(win_label, (350, 50))
+
+        exp_label = myfont.render("Навыки: ".decode('utf8'), 1, (255,255,0))
+        level_label = myfont.render("Уровень: {}".format(hero.current_level).decode('utf8'), 1, (255,255,0))
+        city_label = myfont.render("Город: {}".format(hero.city()).decode('utf8'), 1, (255,255,0))
+        screen.blit(exp_label, (0, 5))
         screen.blit(exp_label, (0, 5))
         screen.blit(level_label, (0, 30))
         screen.blit(city_label, (0, 60))
@@ -143,5 +157,4 @@ entities = pygame.sprite.Group() # Все объекты
 animatedEntities = pygame.sprite.Group() # все анимированные объекты, за исключением героя
 platforms = [] # то, во что мы будем врезаться или опираться
 if __name__ == "__main__":
-        
     main()
