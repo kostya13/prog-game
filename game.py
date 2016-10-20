@@ -59,15 +59,16 @@ def loadLevel():
         pf = Platform(col * PLATFORM_WIDTH, y)
         entities.add(pf)
         platforms.append(pf)
+    stopx = PLATFORM_WIDTH * 3
     for col in range(1, 6): 
-        stopx = col * PLATFORM_WIDTH * 8
         for i in range(1, col):
             pf = Stop(stopx, y - PLATFORM_HEIGHT * i)
             entities.add(pf)
             platforms.append(pf)
+        stopx += PLATFORM_WIDTH * 10
     skillx = PLATFORM_WIDTH * 4
     for i, img in enumerate(skills):
-        bd = Skill((i + 4) * PLATFORM_WIDTH, y - 2 * PLATFORM_HEIGHT, "skills/{}".format(img))
+        bd = Skill(skillx, y - 2 * PLATFORM_HEIGHT, "skills/{}".format(img))
         entities.add(bd)
         platforms.append(bd)
         skillx += PLATFORM_WIDTH * 2
@@ -104,7 +105,7 @@ def main():
     
     
     camera = Camera(camera_configure, total_level_width, total_level_height) 
-    myfont = pygame.font.SysFont("arial.ttf", 35)
+    myfont = pygame.font.SysFont("arial.ttf", 25)
     winfont = pygame.font.SysFont("arial.ttf", 55)
     while True: # Основной цикл программы
         timer.tick(60)
@@ -135,7 +136,6 @@ def main():
             win_label = winfont.render("Вы достигли уровня 4!".decode('utf8'), 1, (255,255,255))
             screen.blit(winner, (120, 40))
             screen.blit(win_label, (350, 50))
-
         exp_label = myfont.render("Навыки: ".decode('utf8'), 1, (255,255,0))
         level_label = myfont.render("Уровень: {}".format(hero.current_level).decode('utf8'), 1, (255,255,0))
         city_label = myfont.render("Город: {}".format(hero.city()).decode('utf8'), 1, (255,255,0))
@@ -143,12 +143,12 @@ def main():
         screen.blit(exp_label, (0, 5))
         screen.blit(level_label, (0, 30))
         screen.blit(city_label, (0, 60))
-	
+    
         animatedEntities.update() # показываеaм анимацию 
         camera.update(hero) # центризируем камеру относительно персонажа
         hero.update(left, right, up, running, platforms, entities) # передвижение
-	for i, s in enumerate(hero.skills):
-            screen.blit(s.image, (110 + i * (PLATFORM_WIDTH + 2), 0))
+        for i, s in enumerate(hero.skills):
+            screen.blit(s.image, (70 + i * PLATFORM_WIDTH, 0))
         for e in entities:
             screen.blit(e.image, camera.apply(e))
         pygame.display.update()     # обновление и вывод всех изменений на экран

@@ -40,7 +40,7 @@ class Player(sprite.Sprite):
         self.current_level = 0
         self.home = True
         self.level_width = level_width
-	self.skills = []
+        self.skills = []
         self.xvel = 0   #скорость перемещения. 0 - стоять на месте
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
@@ -144,9 +144,7 @@ class Player(sprite.Sprite):
             self.rect.x = self.level_width - WIDTH
         self.collide(self.xvel, 0, platforms, entities)
 
-        for i, l in enumerate(self.levels):
-           if len(self.skills) > l:
-               self.current_level = i + 1
+        self.current_level = len(self.skills) / 5
    
     def collide(self, xvel, yvel, platforms, entities):
         for p in platforms:
