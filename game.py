@@ -72,7 +72,7 @@ def loadLevel():
         entities.add(bd)
         platforms.append(bd)
         skillx += PLATFORM_WIDTH * 2
-    tp = BlockTeleport(35 * PLATFORM_WIDTH, y - 5 * PLATFORM_HEIGHT)
+    tp = BlockTeleport(29 * PLATFORM_WIDTH, y - 5 * PLATFORM_HEIGHT)
     entities.add(tp)
     platforms.append(tp)
     animatedEntities.add(tp)
@@ -111,6 +111,8 @@ def main():
         timer.tick(60)
         for e in pygame.event.get(): # Обрабатываем события
             if e.type == QUIT:
+                raise SystemExit, "QUIT"
+            if e.type == KEYDOWN and e.key == K_F10:
                 raise SystemExit, "QUIT"
             if e.type == KEYDOWN and e.key == K_UP:
                 up = True
